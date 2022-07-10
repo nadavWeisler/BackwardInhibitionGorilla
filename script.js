@@ -1,4 +1,9 @@
-const categories = ["size", "color", "shape"]
+const size =   '<p style="text-align: center;"></p><span class="" style="font-size: 70px;">גודל</span>'
+const color = '<p style="text-align: center;"></p><span class="" style="font-size: 70px;">צבע</span>'
+const shape = '<p style="text-align: center;"></p><span class="" style="font-size: 70px;">צורה</span>'
+
+const categories = [size, color, shape]
+
 const colors = ["blue", "red"]
 const shapes = ["shtrudel", "hashtag"]
 const sizes = ["small", "big"]
@@ -25,84 +30,50 @@ function createOneFoursome() {
     let stimuli_2 = ""
     let stimuli_3 = ""
     random_index = randomIntFromInterval(0, 2)
-    if (categories[random_index] == "color") {
+    if (categories[random_index] == color) {
         random_color = randomIntFromInterval(0, 1)
         target = colors[random_color]
-        if (random_color == 0) {
-            stimuli_1 = colors[1]
-            stimuli_2 = colors[1]
-            stimuli_3 = colors[1]
-        } else {
-            stimuli_1 = colors[0]
-            stimuli_2 = colors[0]
-            stimuli_3 = colors[0]
-        }
+        stimuli_1 = colors[1 - random_color]
+        stimuli_2 = colors[1 - random_color]
+        stimuli_3 = colors[1 - random_color]
+        
     } else {
-        random_color = randomIntFromInterval(0, 1)
-        target = colors[random_color]
-        random_color = randomIntFromInterval(0, 1)
-        stimuli_1 = colors[random_color]
-        random_color = randomIntFromInterval(0, 1)
-        stimuli_2 = colors[random_color]
-        random_color = randomIntFromInterval(0, 1)
-        stimuli_3 = colors[random_color]
+        let one_random = randomIntFromInterval(0, 1)
+        target = colors[randomIntFromInterval(0, 1)]
+        stimuli_1 = colors[one_random]
+        stimuli_2 = colors[randomIntFromInterval(0, 1)]
+        stimuli_3 = colors[1 - one_random]
     }
 
-    if (categories[random_index] == "shape") {
+    if (categories[random_index] == shape) {
         random_shape = randomIntFromInterval(0, 1)
         target += ("_" + shapes[random_shape])
-        if (random_shape == 0) {
-            stimuli_1 += ("_" + shapes[1])
-            stimuli_2 += ("_" + shapes[1])
-            stimuli_3 += ("_" + shapes[1])
-        } else {
-            stimuli_1 += ("_" + shapes[0])
-            stimuli_2 += ("_" + shapes[0])
-            stimuli_3 += ("_" + shapes[0])
-        }
+        stimuli_1 += ("_" + shapes[1 - random_shape])
+        stimuli_2 += ("_" + shapes[1 - random_shape])
+        stimuli_3 += ("_" + shapes[1 - random_shape])
     } else {
-        random_shape = randomIntFromInterval(0, 1)
-        target += ("_" + shapes[random_shape])
-        random_shape = randomIntFromInterval(0, 1)
-        stimuli_1 += ("_" + shapes[random_shape])
-        random_shape = randomIntFromInterval(0, 1)
-        stimuli_2 += ("_" + shapes[random_shape])
-        random_shape = randomIntFromInterval(0, 1)
-        stimuli_3 += ("_" + shapes[random_shape])
+        let one_random = randomIntFromInterval(0, 1)
+        target += ("_" + shapes[randomIntFromInterval(0, 1)])
+        stimuli_1 += ("_" + shapes[randomIntFromInterval(0, 1)])
+        stimuli_2 += ("_" + shapes[one_random])
+        stimuli_3 += ("_" + shapes[1 - one_random])
     }
 
-    if (categories[random_index] == "size") {
+    if (categories[random_index] == size) {
         random_size = randomIntFromInterval(0, 1)
         target += ("_" + sizes[random_size])
-        if (random_size == 0) {
-            stimuli_1 += ("_" + sizes[1])
-            stimuli_2 += ("_" + sizes[1])
-            stimuli_3 += ("_" + sizes[1])
-        } else {
-            stimuli_1 += ("_" + sizes[0])
-            stimuli_2 += ("_" + sizes[0])
-            stimuli_3 += ("_" + sizes[0])
-        }
+        stimuli_1 += ("_" + sizes[1 - random_size])
+        stimuli_2 += ("_" + sizes[1 - random_size])
+        stimuli_3 += ("_" + sizes[1 - random_size])
     } else {
-        random_size = randomIntFromInterval(0, 1)
-        target += ("_" + sizes[random_size])
-        random_size = randomIntFromInterval(0, 1)
-        stimuli_1 += ("_" + sizes[random_size])
-        random_size = randomIntFromInterval(0, 1)
-        stimuli_2 += ("_" + sizes[random_size])
-        random_size = randomIntFromInterval(0, 1)
-        stimuli_3 += ("_" + sizes[random_size])
+        let one_random = randomIntFromInterval(0, 1)
+        target += ("_" + sizes[randomIntFromInterval(0, 1)])
+        stimuli_1 += ("_" + sizes[one_random])
+        stimuli_2 += ("_" + sizes[1 - one_random])
+        stimuli_3 += ("_" + sizes[randomIntFromInterval(0, 1)])
     }
-
+    
     return [target, stimuli_1, stimuli_2, stimuli_3, categories[random_index], random_index]
-}
-
-function createNFouesomes(n) {
-    let all = []
-    for (let i = 0; i < n; i++) {
-        all.push(createOneFoursome())
-    }
-    return all
 }
 
 function shuffle(array) {
@@ -123,32 +94,35 @@ function shuffle(array) {
     return array;
 }
 
-allTrials = createNFouesomes(200)
-
 count = 0
 
-gorillaTaskBuilder.postProcessSpreadsheet((spreadsheet) => {
+gorillaTaskBuilder.postProcessSpreadsheet((spreadsheet: any[]) => {
     modifiedSpreadsheet = []
-        // iterate over all rows and append the order that they're in now
-    for (var i = 0; i < spreadsheet.length; i++) {
-        if (spreadsheet[i].display && (spreadsheet[i].display == "Start_Practice" || spreadsheet[i].display == "Actual_Trials")) {
-            current_trial = []
-            spreadsheet[i].ANSWER = stimulus[allTrials[i][0]]
+    // iterate over all rows and append the order that they're in now
+    for(var i = 0; i < spreadsheet.length; i++) {
+        if(spreadsheet[i].display && (spreadsheet[i].display == "Start_Practice" || spreadsheet[i].display == "Actual_Trials")) {
+            let trial = createOneFoursome();
+            spreadsheet[i].ANSWER = stimulus[trial[0]]
+            spreadsheet[i].Clue = trial[4]
+
+            let current_trial = []
             for (let j = 0; j < 4; j++) {
-                current_trial.push(allTrials[i][j])
+                current_trial.push(trial[j])
             }
-            current_trial = shuffle(current_trial)
-            current_trial.push(allTrials[i][4])
-
-            spreadsheet[i].Stimulus_Left_Up = stimulus[current_trial[0]]
-            spreadsheet[i].Stimulus_Right_Up = stimulus[current_trial[1]]
-            spreadsheet[i].Stimulus_Left_Down = stimulus[current_trial[2]]
-            spreadsheet[i].Stimulus_Right_Down = stimulus[current_trial[3]]
-            spreadsheet[i].Clue = current_trial[4]
-
+            
+            trial = shuffle(current_trial);
+            spreadsheet[i].Stimulus_Left_Up	= stimulus[trial[0]]
+            spreadsheet[i].Stimulus_Right_Up = stimulus[trial[1]]
+            spreadsheet[i].Stimulus_Left_Down = stimulus[trial[2]]
+            spreadsheet[i].Stimulus_Right_Down = stimulus[trial[3]]
+            spreadsheet[i].Count = count
+            count++;
+            modifiedSpreadsheet.push(spreadsheet[i])
         }
-        modifiedSpreadsheet.push(spreadsheet[i])
+        else {
+            modifiedSpreadsheet.push(spreadsheet[i])
+        }
     }
-
+    
     return modifiedSpreadsheet
 })
